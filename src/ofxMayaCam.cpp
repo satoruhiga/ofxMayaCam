@@ -2,15 +2,19 @@
 
 ofxMayaCam::ofxMayaCam()
 {
-	bMouseInputEnabled = false;
+	inputEnabled = false;
 	sensitivity = 0.8;
 	upVector.set(0, 1, 0);
+	focus = 200;
 	
 	try {
-		enableMouseInput();
+		enableInput();
 	} catch (...) {}
 	
 	reset();
+	
+	for (int i = 0; i < 3; i++)
+		numkeys[i] = false;
 }
 
 ofxMayaCam::~ofxMayaCam()
@@ -19,8 +23,7 @@ ofxMayaCam::~ofxMayaCam()
 
 void ofxMayaCam::reset()
 {
-	eye.set(0, 0, 0);
-	pos.set(0, 0, 200);
+	pos.set(0, 0, 0);
 	rot.set(0, 0, 0, 1);
 	
 	updateTransform();
@@ -29,18 +32,22 @@ void ofxMayaCam::reset()
 void ofxMayaCam::updateTransform()
 {
 	ofMatrix4x4 m;
-	m.preMultTranslate(eye);
-	m.preMultRotate(rot);
-	m.preMultTranslate(-eye);
-	
 	m.preMultTranslate(pos);
+	m.preMultRotate(rot);
+	m.preMultTranslate(-pos);
+	
+	m.preMultTranslate(pos + ofVec3f(0, 0, focus));
 	
 	setTransformMatrix(m);
 }
 
 void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 {
-	if (!getAltKeyState()) return;
+	bool n = false;
+	for (int i = 0; i < 3; i++)
+		if (numkeys[i]) n = numkeys[i];
+		
+	if (!getAltKeyState() && !n) return;
 	
 	ofVec2f last(ofGetPreviousMouseX(), ofGetPreviousMouseY());
 	ofVec2f current(ofGetMouseX(), ofGetMouseY());
@@ -54,14 +61,16 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 		gain *= 0.1;
 	}
 	
-	if (mouse.button == 0)
+	if ((mouse.button == 0 && !n)
+		|| (mouse.button == 0 && numkeys[2]))
 	{
 		rot = ofQuaternion(-d.y * gain, ofVec3f(1, 0, 0)) * rot;
 		rot *= ofQuaternion(-d.x * gain, upVector);
 		
 		updated = true;
 	}
-	else if (mouse.button == 1)
+	else if ((mouse.button == 1 && !n)
+			 || (mouse.button == 0 && numkeys[0]))
 	{
 		ofVec3f a = d;
 		a.x *= -1;
@@ -70,11 +79,11 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 		a *= gain;
 		
 		pos += a;
-		eye += a;
 		
 		updated = true;
 	}
-	else if (mouse.button == 2)
+	else if ((mouse.button == 2 && !n)
+			 || (mouse.button == 0 && numkeys[1]))
 	{
 		ofVec3f a;
 		a.z = -d.x + -d.y;
@@ -83,7 +92,6 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 		a *= gain;
 		
 		pos += a;
-		eye += a;
 
 		updated = true;
 	}
@@ -92,27 +100,49 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 		updateTransform();
 }
 
+void ofxMayaCam::keyPressed(ofKeyEventArgs &key)
+{
+	if (key.key == '1' || key.key == '!')
+		numkeys[0] = true;
+	else if (key.key == '2' || key.key == '@')
+		numkeys[1] = true;
+	else if (key.key == '3' || key.key == '#')
+		numkeys[2] = true;
+}
+
+void ofxMayaCam::keyReleased(ofKeyEventArgs &key)
+{
+	if (key.key == '1' || key.key == '!')
+		numkeys[0] = false;
+	else if (key.key == '2' || key.key == '@')
+		numkeys[1] = false;
+	else if (key.key == '3' || key.key == '#')
+		numkeys[2] = false;
+}
+
 void ofxMayaCam::mousePressed(ofMouseEventArgs& mouse) {}
 void ofxMayaCam::mouseMoved(ofMouseEventArgs& mouse) {}
 void ofxMayaCam::mouseReleased(ofMouseEventArgs& mouse) {}
 
-void ofxMayaCam::enableMouseInput()
+void ofxMayaCam::enableInput()
 {
-	if(!bMouseInputEnabled){
-		bMouseInputEnabled = true;
+	if(!inputEnabled){
+		inputEnabled = true;
 		ofRegisterMouseEvents(this);
+		ofRegisterKeyEvents(this);
 	}
 }
 
-void ofxMayaCam::disableMouseInput()
+void ofxMayaCam::disableInput()
 {
-	if(bMouseInputEnabled){
-		bMouseInputEnabled = false;
+	if(inputEnabled){
+		inputEnabled = false;
 		ofUnregisterMouseEvents(this);
+		ofUnregisterKeyEvents(this);
 	}
 }
 
-bool ofxMayaCam::getMouseInputEnabled()
+bool ofxMayaCam::getInputEnabled()
 {
-	return bMouseInputEnabled;
+	return inputEnabled;
 }
