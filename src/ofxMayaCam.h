@@ -10,14 +10,19 @@ public:
 	~ofxMayaCam();
 	
 	void setSensitivity(float v) { sensitivity = v; }
+	float getSensitivity() { return sensitivity; }
+	
 	void setUpVector(ofVec3f v) { upVector = v; }
+	ofVec3f getUpVector() { return upVector; }
+	
 	void setFocus(float v) { focus = v; }
+	float getFocus() { return focus; }
 	
-	ofVec3f getEyePosition() { return pos; }
 	void setEyePosition(ofVec3f v) { pos = v; updateTransform(); }
+	ofVec3f getEyePosition() { return pos; }
 	
-	ofQuaternion getRot() { return rot; }
 	void setRot(ofQuaternion v) { rot = v; updateTransform(); }
+	ofQuaternion getRot() { return rot; }
 	
 	void reset();
 	
