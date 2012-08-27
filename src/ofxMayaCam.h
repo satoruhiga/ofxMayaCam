@@ -34,13 +34,22 @@ public:
 	void keyPressed(ofKeyEventArgs &key);
 	void keyReleased(ofKeyEventArgs &key);
 	
-	void enableInput();
-	void disableInput();
-	bool getInputEnabled();
+	void enableAllInput();
+	void disableAllInput();
+	
+	void enableMouseInput();
+	void disableMouseInput();
+	bool getMouseInputEnabled();
+	
+	// default = off
+	void enableKeyInput();
+	void disableKeyInput();
+	bool getKeyInputEnabled();
 
 protected:
 
-	bool inputEnabled;
+	bool mouseInputEnabled;
+	bool keyInputEnabled;
 	
 	float sensitivity;
 	

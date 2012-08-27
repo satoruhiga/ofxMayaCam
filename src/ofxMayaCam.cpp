@@ -2,13 +2,14 @@
 
 ofxMayaCam::ofxMayaCam()
 {
-	inputEnabled = false;
+	mouseInputEnabled = false;
+	keyInputEnabled = false;
 	sensitivity = 0.8;
 	upVector.set(0, 1, 0);
 	focus = 200;
 	
 	try {
-		enableInput();
+		enableMouseInput();
 	} catch (...) {}
 	
 	reset();
@@ -102,21 +103,21 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 
 void ofxMayaCam::keyPressed(ofKeyEventArgs &key)
 {
-	if (key.key == '1' || key.key == '!')
+	if (key.key == '1')
 		numkeys[0] = true;
-	else if (key.key == '2' || key.key == '@')
+	else if (key.key == '2')
 		numkeys[1] = true;
-	else if (key.key == '3' || key.key == '#')
+	else if (key.key == '3')
 		numkeys[2] = true;
 }
 
 void ofxMayaCam::keyReleased(ofKeyEventArgs &key)
 {
-	if (key.key == '1' || key.key == '!')
+	if (key.key == '1')
 		numkeys[0] = false;
-	else if (key.key == '2' || key.key == '@')
+	else if (key.key == '2')
 		numkeys[1] = false;
-	else if (key.key == '3' || key.key == '#')
+	else if (key.key == '3')
 		numkeys[2] = false;
 }
 
@@ -124,25 +125,60 @@ void ofxMayaCam::mousePressed(ofMouseEventArgs& mouse) {}
 void ofxMayaCam::mouseMoved(ofMouseEventArgs& mouse) {}
 void ofxMayaCam::mouseReleased(ofMouseEventArgs& mouse) {}
 
-void ofxMayaCam::enableInput()
+void ofxMayaCam::enableAllInput()
 {
-	if(!inputEnabled){
-		inputEnabled = true;
+	enableMouseInput();
+	enableKeyInput();
+}
+
+void ofxMayaCam::disableAllInput()
+{
+	disableMouseInput();
+	disableKeyInput();
+}
+
+void ofxMayaCam::enableMouseInput()
+{
+	if (!mouseInputEnabled)
+	{
 		ofRegisterMouseEvents(this);
-		ofRegisterKeyEvents(this);
+		mouseInputEnabled = true;
 	}
 }
 
-void ofxMayaCam::disableInput()
+void ofxMayaCam::disableMouseInput()
 {
-	if(inputEnabled){
-		inputEnabled = false;
+	if (mouseInputEnabled)
+	{
 		ofUnregisterMouseEvents(this);
-		ofUnregisterKeyEvents(this);
+		mouseInputEnabled = false;
 	}
 }
 
-bool ofxMayaCam::getInputEnabled()
+bool ofxMayaCam::getMouseInputEnabled()
 {
-	return inputEnabled;
+	return mouseInputEnabled;
+}
+
+void ofxMayaCam::enableKeyInput()
+{
+	if (!keyInputEnabled)
+	{
+		ofRegisterKeyEvents(this);
+		keyInputEnabled = true;
+	}
+}
+
+void ofxMayaCam::disableKeyInput()
+{
+	if (keyInputEnabled)
+	{
+		ofUnregisterKeyEvents(this);
+		keyInputEnabled = false;
+	}
+}
+
+bool ofxMayaCam::getKeyInputEnabled()
+{
+	return keyInputEnabled;
 }
