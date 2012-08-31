@@ -50,9 +50,8 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 		
 	if (!getAltKeyState() && !n) return;
 	
-	ofVec2f last(ofGetPreviousMouseX(), ofGetPreviousMouseY());
-	ofVec2f current(ofGetMouseX(), ofGetMouseY());
-	ofVec2f d = current - last;
+	ofVec2f current(mouse.x, mouse.y);
+	ofVec2f d = current - last_mouse_pos;
 	
 	bool updated = false;
 	float gain = sensitivity;
@@ -99,6 +98,8 @@ void ofxMayaCam::mouseDragged(ofMouseEventArgs& mouse)
 	
 	if (updated)
 		updateTransform();
+	
+	last_mouse_pos.set(mouse.x, mouse.y);
 }
 
 void ofxMayaCam::keyPressed(ofKeyEventArgs &key)
@@ -121,7 +122,11 @@ void ofxMayaCam::keyReleased(ofKeyEventArgs &key)
 		numkeys[2] = false;
 }
 
-void ofxMayaCam::mousePressed(ofMouseEventArgs& mouse) {}
+void ofxMayaCam::mousePressed(ofMouseEventArgs& mouse)
+{
+	last_mouse_pos.set(mouse.x, mouse.y);
+}
+
 void ofxMayaCam::mouseMoved(ofMouseEventArgs& mouse) {}
 void ofxMayaCam::mouseReleased(ofMouseEventArgs& mouse) {}
 

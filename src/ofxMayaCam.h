@@ -58,6 +58,8 @@ protected:
 	ofVec3f pos;
 	ofQuaternion rot;
 	
+	ofVec2f last_mouse_pos;
+	
 	bool numkeys[3];
 	
 	bool getAltKeyState();
