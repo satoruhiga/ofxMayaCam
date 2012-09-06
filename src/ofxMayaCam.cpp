@@ -30,6 +30,58 @@ void ofxMayaCam::reset()
 	updateTransform();
 }
 
+void ofxMayaCam::customDraw()
+{
+	ofPushStyle();
+	
+	ofNoFill();
+	
+	const ofRectangle& rect = ofGetCurrentViewport();
+	const float fov = getFov() * 0.5;
+	const float aspect = rect.width / rect.height;
+	
+	ofVec3f v(0, 0, -100);
+	v.rotate(fov, ofVec3f(1, 0, 0));
+	
+	float yy = v.y * 1.001;
+	float xx = yy * aspect;
+	float zz = v.z;
+	
+	ofSetRectMode(OF_RECTMODE_CENTER);
+	
+	{
+		ofSetLineWidth(3);
+		ofSetColor(0);
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(xx, yy, zz));
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(-xx, yy, zz));
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(xx, -yy, zz));
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(-xx, -yy, zz));
+		
+		glPushMatrix();
+		glTranslatef(0, 0, zz);
+		ofRect(0, 0, xx * 2, yy * 2);
+		glPopMatrix();
+	}
+
+	{
+		ofSetLineWidth(1);
+		ofSetColor(255);
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(xx, yy, zz));
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(-xx, yy, zz));
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(xx, -yy, zz));
+		ofLine(ofVec3f(0, 0, 0), ofVec3f(-xx, -yy, zz));
+		
+		glPushMatrix();
+		glTranslatef(0, 0, zz);
+		ofRect(0, 0, xx * 2, yy * 2);
+		glPopMatrix();
+	}
+	
+	ofDrawAxis(50);
+	
+	ofPopStyle();
+}
+
 void ofxMayaCam::updateTransform()
 {
 	ofMatrix4x4 m;

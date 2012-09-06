@@ -67,4 +67,6 @@ protected:
 	
 	void updateTransform();
 	
+	void customDraw();
+	
 };
