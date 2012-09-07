@@ -32,6 +32,9 @@ void ofxMayaCam::reset()
 
 void ofxMayaCam::customDraw()
 {
+	glPushAttrib(GL_ENABLE_BIT);
+	glDisable(GL_DEPTH_TEST);
+	
 	ofPushStyle();
 	
 	ofNoFill();
@@ -80,6 +83,8 @@ void ofxMayaCam::customDraw()
 	ofDrawAxis(50);
 	
 	ofPopStyle();
+	
+	glPopAttrib();
 }
 
 void ofxMayaCam::updateTransform()
